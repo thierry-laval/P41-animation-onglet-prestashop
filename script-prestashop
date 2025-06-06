@@ -1,0 +1,37 @@
+<script>
+  // Thierry Laval - thierrylaval.dev
+  const initialTitle = document.title;
+  let counter = 0;
+
+  // Liste des messages personnalisés
+  const dynamicMessages = [
+    () => getCartCount() > 0 
+      ? `🛍️ ${getCartCount()} trésor${getCartCount() > 1 ? 's' : ''} vous attend${getCartCount() > 1 ? 'ent' : ''} !`
+      : "🖤 Votre panier est bien seul...",
+    () => "🔄 Une petite visite chez Thierry Laval ?",
+    () => "💡 Vos coups de cœur sont toujours là !",
+    () => "🖤 Vous nous manquez déjà..."
+  ];
+
+  // Sécurisation de l'accès au panier
+  function getCartCount() {
+    return window?.prestashop?.cart?.products_count || 0;
+  }
+
+  const tabCheckInterval = setInterval(() => {
+    const isVisible = document.visibilityState === "visible";
+
+    if (isVisible) {
+      document.title = initialTitle;
+      counter = 0;
+    } else {
+      const messageIndex = counter % dynamicMessages.length;
+      document.title = dynamicMessages[messageIndex]();
+      counter++;
+    }
+  }, 1500); // On espace un peu plus pour un effet doux
+
+  window.addEventListener('beforeunload', () => {
+    clearInterval(tabCheckInterval);
+  });
+</script>
